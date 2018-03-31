@@ -23,7 +23,9 @@ main_menu_dict = {
 
 stock_market_menu_dict = {
     "Real Time Sector Performance Graph": rt_sector_performance_graph,
-    "Sector Performance Raw Data": sector_performance_raw_data
+    "Sector Performance Raw Data": sector_performance_raw_data,
+    "Single Sector Raw Data": sp_one_sector,
+    "Print All Sector Data": print_sd
 }
 
 forex_market_menu_dict = {

@@ -35,7 +35,7 @@ def choose_from_menu(menulist, menu_dictionary):
         print()
         menu_dictionary[menulist[menuchoice]]()
     except (IndexError, ValueError):
-        print('***invalid choice***')
+        print('***invalid**choice***')
 
 
 def initialize_menu(menu_dictionary, menutitle):
