@@ -1,5 +1,5 @@
 '''
-#MENU
+##MENU
 #Parker Dinkins
 #Python 3.6
 
@@ -33,10 +33,14 @@ def choose_from_menu(menulist, menu_dictionary):
         menuchoice = int(input('\nMenu Choice:  '))
         menuchoice -= 1
         print()
-        menu_dictionary[menulist[menuchoice]]()
+        init_function(menu_dictionary, menulist, menuchoice)
     except (IndexError, ValueError):
         print('***invalid**choice***')
 
 
 def initialize_menu(menu_dictionary, menutitle):
     display_menu_choices(menu_dictionary, menutitle)
+
+def init_function(menu_dictionary, menulist, mc):
+    
+    menu_dictionary[menulist[mc]]()
