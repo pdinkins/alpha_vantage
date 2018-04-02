@@ -9,9 +9,13 @@ import re
 
 
 class SectorPerformances(av):
+    """This class implements all the sector performance api calls
+    """
 
     def __init__(self, *args, **kwargs):
-
+        """
+        Inherit AlphaVantage base class with its default arguments
+        """
         super(SectorPerformances, self).__init__(*args, **kwargs)
         self._append_type = False
         if self.output_format.lower() == 'csv':
@@ -19,11 +23,23 @@ class SectorPerformances(av):
                 self.output_format.lower()))
 
     def percentage_to_float(self, val):
+        """ Transform a string of ther form f.f% into f.f/100
 
+        Keyword Arguments:
+            val: The string to convert
+        """
         return float(val.strip('%')) / 100
 
     def _output_format_sector(func, override=None):
+        """ Decorator in charge of giving the output its right format, either
+        json or pandas (replacing the % for usable floats, range 0-1.0)
 
+        Keyword Arguments:
+            func: The function to be decorated
+            override: Override the internal format of the call, default None
+        Returns:
+            A decorator for the format sector api call
+        """
         @wraps(func)
         def _format_wrapper(self, *args, **kwargs):
             json_response, data_key, meta_data_key = func(
@@ -60,7 +76,12 @@ class SectorPerformances(av):
     @_output_format_sector
     @av._call_api_on_func
     def get_sector(self):
+        """This API returns the realtime and historical sector performances
+        calculated from S&P500 incumbents.
 
+        Returns:
+            A pandas or a dictionary with the results from the api call
+        """
         _FUNCTION_KEY = "SECTOR"
         # The keys for the json output
         _DATA_KEYS = ["Rank A: Real-Time Performance",

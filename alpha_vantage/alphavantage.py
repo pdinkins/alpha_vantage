@@ -18,7 +18,9 @@ else:
 
 
 class AlphaVantage(object):
-
+    """ Base class where the decorators and base function for the other
+    classes of this python wrapper will inherit from.
+    """
     _ALPHA_VANTAGE_API_URL = "http://www.alphavantage.co/query?"
     _ALPHA_VANTAGE_MATH_MAP = ['SMA', 'EMA', 'WMA', 'DEMA', 'TEMA', 'TRIMA',
                                'T3', 'KAMA', 'MAMA']
@@ -27,7 +29,19 @@ class AlphaVantage(object):
 
     def __init__(self, key=None, retries=5, output_format='json',
                  treat_info_as_error=True, indexing_type='date'):
+        """ Initialize the class
 
+        Keyword Arguments:
+            key:  Alpha Vantage api key
+            retries:  Maximum amount of retries in case of faulty connection or
+                server not able to answer the call.
+            treat_info_as_error: Treat information from the api as errors
+            output_format:  Either 'json', 'pandas' os 'csv'
+            indexing_type: Either 'date' to use the default date string given
+            by the alpha vantage api call or 'integer' if you just want an
+            integer indexing on your dataframe. Only valid, when the
+            output_format is 'pandas'.
+        """
         if key is None:
             raise ValueError(
                 'Get a free key from the alphavantage website:'
@@ -46,7 +60,12 @@ class AlphaVantage(object):
         self.indexing_type = indexing_type
 
     def _retry(func):
+        """ Decorator for retrying api calls (in case of errors from the api
+        side in bringing the data)
 
+        Keyword Arguments:
+            func:  The function to be retried
+        """
         @wraps(func)
         def _retry_wrapper(self, *args, **kwargs):
             error_message = ""
@@ -60,6 +79,13 @@ class AlphaVantage(object):
 
     @classmethod
     def _call_api_on_func(cls, func):
+        """ Decorator for forming the api call with the arguments of the
+        function, it works by taking the arguments given to the function
+        and building the url to call the api on it
+
+        Keyword Arguments:
+            func:  The function to be decorated
+        """
 
         # Argument Handling
         argspec = inspect.getargspec(func)
@@ -134,7 +160,13 @@ class AlphaVantage(object):
 
     @classmethod
     def _output_format(cls, func, override=None):
+        """ Decorator in charge of giving the output its right format, either
+        json or pandas
 
+        Keyword Arguments:
+            func:  The function to be decorated
+            override:  Override the internal format of the call, default None
+        """
         @wraps(func)
         def _format_wrapper(self, *args, **kwargs):
             call_response, data_key, meta_data_key = func(
@@ -183,7 +215,25 @@ class AlphaVantage(object):
         return _format_wrapper
 
     def map_to_matype(self, matype):
+        """ Convert to the alpha vantage math type integer. It returns an
+        integer correspondant to the type of math to apply to a function. It
+        raises ValueError if an integer greater than the supported math types
+        is given.
 
+        Keyword Arguments:
+            matype:  The math type of the alpha vantage api. It accepts
+            integers or a string representing the math type.
+
+                * 0 = Simple Moving Average (SMA),
+                * 1 = Exponential Moving Average (EMA),
+                * 2 = Weighted Moving Average (WMA),
+                * 3 = Double Exponential Moving Average (DEMA),
+                * 4 = Triple Exponential Moving Average (TEMA),
+                * 5 = Triangular Moving Average (TRIMA),
+                * 6 = T3 Moving Average,
+                * 7 = Kaufman Adaptive Moving Average (KAMA),
+                * 8 = MESA Adaptive Moving Average (MAMA)
+        """
         # Check if it is an integer or a string
         try:
             value = int(matype)
@@ -195,7 +245,15 @@ class AlphaVantage(object):
 
     @_retry
     def _handle_api_call(self, url):
+        """ Handle the return call from the  api and return a data and meta_data
+        object. It raises a ValueError on problems
 
+        Keyword Arguments:
+            url:  The url of the service
+            data_key:  The key for getting the data from the jso object
+            meta_data_key:  The key for getting the meta data information out
+            of the json object
+        """
         response = requests.get(url)
         if 'json' in self.output_format.lower() or 'pandas' in \
                 self.output_format.lower():

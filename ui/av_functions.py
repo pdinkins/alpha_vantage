@@ -1,9 +1,8 @@
-from av.alpha_vantage import alphavantage, cryptocurrencies, foreignexchange
-from av.alpha_vantage import sectorperformance, techindicators, timeseries
+from alpha_vantage import alphavantage, cryptocurrencies, foreignexchange, sectorperformance, techindicators, timeseries
 from pprint import pprint
 from matplotlib import pyplot as plt
 
-apikey = 'DQBYYE0H09YWLS7W'
+apikey = ''
 
 spd0_keys= ["Rank A: Real-Time Performance", 
             "Rank B: 1 Day Performance",
